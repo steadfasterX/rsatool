@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import base64, fractions, optparse, random
 from multiprocessing import Process
+from multiprocessing import Pool
 
 try:
     import gmpy
@@ -42,17 +43,19 @@ def factor_modulus(n, d, e):
     while not found:
         i = 1
         a = random.randint(1,n-1)
+        mp = Pool(8)
 
         while i <= s and not found:
-            mf = Process(target=ccalc, args=(a, s, t, n, i)) 
-            mf.start()
-            mf.join()
+            mf = mp.map_async(ccalc,[a, s, t, n, i])
+            i += 1
+            #mf = Process(target=ccalc, args=(a, s, t, n, i)) 
+            #mf.start()
+            #mf.join()
 #            c1 = pow(a, pow(2, i-1, n) * t, n)
 #            c2 = pow(a, pow(2, i, n) * t, n)
 #
 #            found = c1 != 1 and c1 != (-1 % n) and c2 == 1
 #
-            i += 1
 
     p = fractions.gcd(c1-1, n)
     q = n // p
